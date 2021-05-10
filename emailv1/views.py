@@ -1,19 +1,17 @@
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .serializers import Emailv1Serializer
-import re
+from common.utils.valid_email import is_valid_email
+from common.utils.find_domain import find_domain
 
 @api_view(['POST'])
 def validation_v1(request):
 
     email = request.POST['email_adress']
-    domain= re.findall('(?<=@)[^.]+(?=\.)',email)[0]
+    domain = find_domain(email)
+    valid_email = is_valid_email(email)
     
-    valid_emails = ['.com.br', '.com', '.gov.br', '.org']
-
-    is_valided = (re.findall(r"(?=("+'|'.join(valid_emails)+r"))", email))
-    
-    if len(is_valided) >= 1:
+    if valid_email:
         data = {'email_adress': email, 'domain': domain, 'valid_syntax': True}
         serializer = Emailv1Serializer(data=data)
 
