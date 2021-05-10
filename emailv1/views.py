@@ -2,17 +2,16 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from .serializers import Emailv1Serializer
 from common.utils.valid_email import is_valid_email
-from common.utils.find_domain import find_domain
+import json
 
 @api_view(['POST'])
 def validation_v1(request):
 
-    email = request.POST['email_adress']
-    domain = find_domain(email)
-    valid_email = is_valid_email(email)
-    
+    body_data = json.loads(request.body)
+    valid_email = is_valid_email(body_data['email_adress'])
+
     if valid_email:
-        data = {'email_adress': email, 'domain': domain, 'valid_syntax': True}
+        data = {**body_data, 'valid_syntax': True}
         serializer = Emailv1Serializer(data=data)
 
         if serializer.is_valid():
@@ -21,15 +20,13 @@ def validation_v1(request):
         data_reponse = {
             'status': 'ok',
             'code': 200,
-            'results': [{
-                'email_adress': email,
-                'domain': domain,
-                'valid_syntax': True
-            }]
+            'results': [
+                data
+            ]
         }
 
     else:
-        data = {'email_adress': email, 'domain': domain}
+        data = {**body_data, 'valid_syntax': False}
         serializer = Emailv1Serializer(data=data)
 
         if serializer.is_valid():
@@ -38,11 +35,9 @@ def validation_v1(request):
         data_reponse = {
             'status': 'ok',
             'code': 200,
-            'results': [{
-                'email_adress': email,
-                'domain': domain,
-                'valid_syntax': False
-            }]
+            'results': [
+                data
+            ]
         }
         
 
