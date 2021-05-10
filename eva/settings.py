@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'index',
     'emailv1',
+    'emailv3',
     'rest_framework',
 ]
 
