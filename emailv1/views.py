@@ -8,7 +8,7 @@ import json
 def validation_v1(request: HttpRequest) -> JsonResponse:
 
     body_data = json.loads(request.body)
-    valid_email = is_valid_email(body_data['email_adress'])
+    valid_email = is_valid_email(body_data['email_address'])
 
     if valid_email:
         data = {**body_data, 'valid_syntax': True}
