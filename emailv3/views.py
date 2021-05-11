@@ -1,18 +1,20 @@
-from django.http import HttpRequest
-from rest_framework.response import Response
-from rest_framework.decorators import api_view
-from .serializers import Emailv3Serializer
-from .models import Emailv3
 import json
 import requests
 
-@api_view(['GET'])
-def get_emailv3(request: HttpRequest) -> Response:
+from django.http import HttpRequest
 
-    emails = Emailv3.objects.all()
-    serializer = Emailv3Serializer(emails, many=True)
-    
-    return Response(serializer.data)
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework.generics import ListAPIView
+
+from .serializers import Emailv3Serializer
+from .models import Emailv3
+from .filters import Emailv3Filter
+
+class Emailv3Filter(ListAPIView):
+    queryset = Emailv3.objects.all()
+    serializer_class = Emailv3Serializer
+    filter_class = Emailv3Filter
 
 @api_view(['POST'])
 def validation_v3(request: HttpRequest) -> Response:
