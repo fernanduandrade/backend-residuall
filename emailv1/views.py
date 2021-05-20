@@ -24,29 +24,12 @@ def validation_v1(request: HttpRequest) -> Response:
     body_data = json.loads(request.body)
     valid_email = is_valid_email(body_data['email_address'])
 
-    if valid_email:
-        data = {**body_data, 'valid_syntax': True}
-        serializer = Emailv1Serializer(data=data)
+    data = {**body_data, 'valid_syntax': valid_email}
+    serializer = Emailv1Serializer(data=data)
 
-        if serializer.is_valid():
-            serializer.save()
-
-        data_reponse = {
-            'status': 'ok',
-            'code': 200,
-            'results': [
-                data
-            ]
-        }
-
-    else:
-        data = {**body_data, 'valid_syntax': False}
-        serializer = Emailv1Serializer(data=data)
-
-        if serializer.is_valid():
-            serializer.save()
-
-        data_reponse = {
+    if serializer.is_valid():
+        serializer.save()
+    data_reponse = {
             'status': 'ok',
             'code': 200,
             'results': [
